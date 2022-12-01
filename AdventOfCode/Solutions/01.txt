@@ -1,2 +1,2 @@
-<Day 1 file input content>
-<Day 1 file input content>
+69310
+206104

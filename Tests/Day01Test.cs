@@ -6,7 +6,6 @@ namespace Tests
     {
         private Day01 _day;
         
-        private readonly string _input;
         private readonly string _part1Solution;
         private readonly string _part2Solution;
 
@@ -14,14 +13,13 @@ namespace Tests
         {
             _day = new Day01();
 
-            _input = File.ReadAllText(_day.InputFilePath);
-
             var solutionPath = _day.InputFilePath.Replace("Inputs", "Solutions");
             var solutions = File.ReadAllLines(solutionPath);
             
             _part1Solution = solutions[0];
             _part2Solution = solutions[1];
         }
+
         [Fact]
         public async void  TestSolve_1()
         {
@@ -34,7 +32,6 @@ namespace Tests
         public async void TestSolve_2()
         {
             var result = await _day.Solve_2();
-
             Assert.Equal(result, _part2Solution);
         }
     }
