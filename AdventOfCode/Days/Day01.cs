@@ -1,16 +1,14 @@
-﻿namespace AdventOfCode;
+﻿namespace AdventOfCode.Days;
 
-public class Day01 : BaseDay
+public class Day01 : AbstractBaseDay
 {
     private readonly List<int> _caloriesSums = new();
 
     public Day01()
     {
-        var lines = File.ReadAllLines(InputFilePath);
-
         List<int> currentCalories = new();
 
-        foreach (string line in lines)
+        foreach (string line in _lines)
         {
             if (line == string.Empty)
             {
