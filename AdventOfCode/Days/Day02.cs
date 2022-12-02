@@ -44,9 +44,9 @@ public class Day02 : AbstractBaseDay
     {
         foreach (var match in _lines)
         {
-            var matchChocies = match.Split(" ");
-            var opponent = _choices[matchChocies[0]];
-            var mine = _choices[matchChocies[1]];
+            var matchChoices = match.Split(" ");
+            var opponent = _choices[matchChoices[0]];
+            var mine = _choices[matchChoices[1]];
 
             _score += _choiceScores[mine];
             _score += DoComparison(opponent, mine);
@@ -66,7 +66,6 @@ public class Day02 : AbstractBaseDay
             var opponentText = _choices[opponentRaw];
 
             var outcome = matchChoices[1];//_choices[matchChocies[1]];
-            var mineText = _choices[outcome];
 
             var play = GetPlay(opponentText, outcome);
 
