@@ -5,9 +5,7 @@ public class Day01 : AbstractBaseDay
     private readonly IEnumerable<int> _caloriesSums;
     public Day01()
     {
-        var text = File.ReadAllText(InputFilePath);
-        
-        _caloriesSums = text.Split("\r\n\r\n")
+        _caloriesSums = _text.Split("\r\n\r\n")
             .Select(e => e.Split("\r\n")
             .Select(e => int.Parse(e))
             .Sum());

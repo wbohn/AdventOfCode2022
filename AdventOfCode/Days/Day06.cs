@@ -13,7 +13,7 @@ namespace AdventOfCode.Days
 
         public Day06()
         {
-            _signal = _lines[0];
+            _signal = _text;
         }
 
         public override ValueTask<string> Solve_1()
