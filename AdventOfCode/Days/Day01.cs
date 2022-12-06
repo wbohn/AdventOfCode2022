@@ -2,25 +2,15 @@
 
 public class Day01 : AbstractBaseDay
 {
-    private readonly List<int> _caloriesSums = new();
-
+    private readonly IEnumerable<int> _caloriesSums;
     public Day01()
     {
-        List<int> currentCalories = new();
-
-        foreach (string line in _lines)
-        {
-            if (line == string.Empty)
-            {
-                _caloriesSums.Add(currentCalories.Sum());
-                currentCalories = new();
-            }
-            else
-            {
-                var caloriesNumber = int.Parse(line);
-                currentCalories.Add(caloriesNumber);
-            }
-        }
+        var text = File.ReadAllText(InputFilePath);
+        
+        _caloriesSums = text.Split("\r\n\r\n")
+            .Select(e => e.Split("\r\n")
+            .Select(e => int.Parse(e))
+            .Sum());
     }
 
     public override ValueTask<string> Solve_1()
@@ -31,10 +21,10 @@ public class Day01 : AbstractBaseDay
 
     public override ValueTask<string> Solve_2()
     {
-        _caloriesSums.Sort();
-        _caloriesSums.Reverse();
-
-        var sumTopThree = _caloriesSums.Take(3).Sum();
+        var sumTopThree = _caloriesSums
+            .OrderByDescending(c => c)
+            .Take(3)
+            .Sum();
         return ValueTask.FromResult(sumTopThree.ToString());
     }
 }
