@@ -1,73 +1,113 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AdventOfCode.Days
 {
+    /* Modified code from
+     *  https://dotnetcoretutorials.com/2020/07/25/a-search-pathfinding-algorithm-in-c
+     */
     public class Day12 : AbstractBaseDay
     {
-        List<string> _map;
-        private int _shortestPathSteps = 0;
+        private readonly List<string> _map;
+
         public Day12()
         {
             _map = _lines.ToList();
+        }
 
-            var start = new Tile
+        public override ValueTask<string> Solve_1()
+        {
+            Tile start = new()
             {
                 Y = _map.FindIndex(x => x.Contains('S'))
             };
             start.X = _map[start.Y].IndexOf("S");
 
-            var finish = new Tile
+            List<Tile> shortestPath = WalkMap(start);
+
+            return ValueTask.FromResult(shortestPath.Count.ToString());
+        }
+
+        public override ValueTask<string> Solve_2()
+        {
+            // brutally find all possible starting positions
+            List<Tile> startTiles = new();
+            for (int r = 0; r < _map.Count; r++)
             {
-                Y = _map.FindIndex(x => x.Contains("E"))
+                for (int c = 0; c < _map.First().Length; c++)
+                {
+                    if (_map[r][c] == 'a' || _map[r][c] == 'S')
+                    {
+                        startTiles.Add(new Tile()
+                        {
+                            X = c,
+                            Y = r
+                        });
+                    }
+                }
+            }
+
+            List<List<Tile>> walkedPaths = new();
+            foreach (var tile in startTiles)
+            {
+                var path = WalkMap(tile);
+                if (path != null)
+                {
+                    walkedPaths.Add(path);
+                }
+            }
+
+            var shortestPath = walkedPaths
+                .OrderBy(p => p.Count)
+                .Take(1)
+                .First();
+
+            return ValueTask.FromResult(shortestPath.Count.ToString());
+        }
+
+        private List<Tile>? WalkMap(Tile start)
+        {
+            Tile finish = new()
+            {
+                Y = _map.FindIndex(x => x.Contains('E'))
             };
             finish.X = _map[finish.Y].IndexOf("E");
 
             start.SetDistance(finish.X, finish.Y);
 
-            var activeTiles = new List<Tile>
+            List<Tile> activeTiles = new()
             {
                 start
             };
-            var visitedTiles = new List<Tile>();
+            List<Tile> visitedTiles = new();
 
             while (activeTiles.Any())
             {
-                var checkTile = activeTiles.OrderBy(x => x.CostDistance).First(); // OrderByDesc().Last()
+                var checkTile = activeTiles.OrderBy(x => x.CostDistance).First(); // OrderByDesc(x => x.CostDistance).Last()
 
                 if (checkTile.X == finish.X && checkTile.Y == finish.Y)
                 {
                     //We found the destination and we can be sure (Because the the OrderBy above)
                     //That it's the most low cost option.
+                    List<Tile> shortestPath = new();
 
                     var tile = checkTile;
                     Console.WriteLine("Retracing steps backwards...");
-
                     while (true)
                     {
-                        _shortestPathSteps += 1;
-
-                        Console.WriteLine($"{tile.X} : {tile.Y}");
-                        if (_map[tile.Y][tile.X] == ' ')
-                        {
-                            var newMapRow = _map[tile.Y].ToCharArray();
-                            newMapRow[tile.X] = '*';
-                            _map[tile.Y] = new string(newMapRow);
-                        }
                         tile = tile.Parent;
                         if (tile == null)
                         {
-                            Console.WriteLine("Map looks like :");
-                            _map.ForEach(x => Console.WriteLine(x));
-                            Console.WriteLine("Done!");
-                            return;
+                            return shortestPath;
+
                         }
+                        shortestPath.Add(tile);
                     }
                 }
-
 
                 visitedTiles.Add(checkTile);
                 activeTiles.Remove(checkTile);
@@ -99,18 +139,8 @@ namespace AdventOfCode.Days
             }
 
             Console.WriteLine("No Path Found!");
+            return null;
         }
-
-        public override ValueTask<string> Solve_1()
-        {
-            return ValueTask.FromResult((_shortestPathSteps - 1).ToString());
-        }
-
-        public override ValueTask<string> Solve_2()
-        {
-            return ValueTask.FromResult(_shortestPathSteps.ToString());
-        }
-
         private static List<Tile> GetWalkableTiles(List<string> map, Tile currentTile, Tile targetTile)
         {
             var possibleTiles = new List<Tile>()
@@ -143,12 +173,12 @@ namespace AdventOfCode.Days
             var c = map[tile.Y][tile.X];
             if (c == 'S')
             {
-                return 0;
+                return 0; // S = a
             }
 
             if (c == 'E')
             {
-                return 25; // z 
+                return 25; // E = z 
             }
             return c - 97; // a = 0
         }
