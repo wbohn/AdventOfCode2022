@@ -29,14 +29,14 @@ namespace Tests
         public async void TestSolve_1()
         {
             var result = await _dayToTest.Solve_1();
-            Assert.Equal(result, _part1Solution);
+            Assert.Equal(_part1Solution, result);
         }
 
         [Fact]
         public async void TestSolve_2()
         {
             var result = await _dayToTest.Solve_2();
-            Assert.Equal(result, _part2Solution);
+            Assert.Equal(_part2Solution, result);
         }
     }
 }
